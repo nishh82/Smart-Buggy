@@ -17,6 +17,7 @@ prepare_react_native_project!
 #   dependencies: {
 #     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
 # ```
+
 flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
 
 linkage = ENV['USE_FRAMEWORKS']
@@ -30,6 +31,7 @@ target 'ARApp' do
 
   use_react_native!(
     :path => config[:reactNativePath],
+    
     # Enables Flipper.
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
@@ -38,6 +40,9 @@ target 'ARApp' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  pod 'ViroReact', :path => '../node_modules/@viro-community/react-viro/ios/'
+pod 'ViroKit', :path => '../node_modules/@viro-community/react-viro/ios/dist/ViroRenderer/'
 
   target 'ARAppTests' do
     inherit! :complete
