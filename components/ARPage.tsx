@@ -1,23 +1,19 @@
-import {
-  ViroARScene,
-  ViroARSceneNavigator,
-  ViroText,
-} from '@viro-community/react-viro';
+// import {
+//   Viro3DObject,
+//   ViroARScene,
+//   ViroARSceneNavigator,
+// } from '@viro-community/react-viro';
 import React from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 
 const InitialScene = () => {
-  return (
-    <ViroARScene>
-      <ViroText text={'Hello'} scale={[0.5, 0.5, 0.5]} position={[0, 0, -1]} />
-    </ViroARScene>
-  );
+  // return <ViroARScene></ViroARScene>;
 };
 
 const ARPage = () => {
   return (
     <View style={{flex: 1}}>
-      <ViroARSceneNavigator initialScene={{scene: InitialScene}} />
+      {/* <ViroARSceneNavigator initialScene={{scene: InitialScene}} /> */}
     </View>
   );
 };

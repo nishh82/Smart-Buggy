@@ -1,49 +1,93 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
-  Button,
+  FlatList,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import ShoppingCart from './ShoppingCart';
+import {ShoppingCartContext} from './ShoppingCartProvider';
 
 const categories = [
   {
     name: 'Product Information',
-    icon: require('../assets/juice.jpg'),
+    icon: require('../assets/home.jpeg'),
     to: 'Product Information',
   },
   {
-    name: 'AR',
-    icon: require('../assets/juice.jpg'),
-    to: 'AR',
+    name: 'Navigate Products',
+    icon: require('../assets/navigate.jpeg'),
+    to: 'Product Navigation',
   },
-  //   {name: 'PHARMACY', icon: require('./assets/pharmacy.png')},
-  //   {name: 'ELECTRONICS', icon: require('./assets/electronics.png')},
-  //   {name: 'HOME', icon: require('./assets/home.png')},
-  //   {name: 'APPAREL', icon: require('./assets/apparel.png')},
-  //   {name: 'TOYS', icon: require('./assets/toys.png')},
-  //   {name: 'HARDWARE', icon: require('./assets/hardware.png')},
+  {
+    name: 'Get Recipes',
+    icon: require('../assets/recipes.png'),
+    to: 'Recipes',
+  },
+  {
+    name: 'Chat with us',
+    icon: require('../assets/chat.png'),
+    to: 'Chat',
+  },
+  {
+    name: 'QR Code',
+    icon: require('../assets/qr-code.jpeg'),
+    to: 'QR Code',
+  },
 ];
 
 const PageHome = ({navigation}: any) => {
+  const {cartItems} = useContext(ShoppingCartContext);
+
+  // const [cartItems, setCartItems] = useState([
+  //   {
+  //     id: 2,
+  //     name: 'Neilson Milk',
+  //     price: 14.99,
+  //     quantity: 2,
+  //     image: require('../assets/item2.webp'),
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Tropicana',
+  //     price: 19.99,
+  //     quantity: 1,
+  //     image: require('../assets/item4.jpg'),
+  //   },
+  // ]);
+
+  const renderItem = ({item}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate(item.to);
+        }}
+        style={styles.categoryItem}>
+        <View style={styles.iconContainer}>
+          <Image source={item.icon} style={styles.icon} />
+        </View>
+        <Text style={styles.categoryText}>{item.name}</Text>
+      </TouchableOpacity>
+    );
+  };
   return (
-    <View style={styles.container}>
-      <View style={styles.categoryContainer}>
-        {categories.map((category, index) => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate(category.to);
-            }}
-            key={index}
-            style={styles.categoryItem}>
-            <View style={styles.iconContainer}>
-              <Image source={category.icon} style={styles.icon} />
-            </View>
-            <Text style={styles.categoryText}>{category.name}</Text>
-          </TouchableOpacity>
-        ))}
+    <View style={{flex: 1}}>
+      <View style={styles.container}>
+        <View style={styles.categoryContainer}>
+          <FlatList
+            data={categories}
+            key={'#'}
+            keyExtractor={(_, idx) => idx.toString()}
+            renderItem={renderItem}
+            horizontal={false}
+            numColumns={3}
+          />
+        </View>
+        <View style={styles.cartContainer}>
+          <ShoppingCart cartItems={cartItems} />
+        </View>
       </View>
     </View>
   );
@@ -52,22 +96,24 @@ const PageHome = ({navigation}: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
     backgroundColor: '#fff',
   },
   categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    width: '70%',
+    paddingHorizontal: 30,
     marginTop: 20,
+    alignItems: 'center',
   },
   categoryItem: {
+    justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 10,
     marginVertical: 20,
   },
   iconContainer: {
     backgroundColor: '#005cbf',
-    borderRadius: 50,
+    borderRadius: 2000,
     padding: 5,
   },
   icon: {
@@ -80,6 +126,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  cartContainer: {
+    flex: 1,
+    borderLeftColor: 'gray',
+    borderLeftWidth: 2,
+    padding: 10,
   },
 });
 
