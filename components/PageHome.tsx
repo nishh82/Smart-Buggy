@@ -36,27 +36,15 @@ const categories = [
     icon: require('../assets/qr-code.jpeg'),
     to: 'QR Code',
   },
+  {
+    name: 'Scan Product',
+    icon: require('../assets/qr-code.jpeg'),
+    to: 'Scan Product',
+  },
 ];
 
 const PageHome = ({navigation}: any) => {
   const {cartItems} = useContext(ShoppingCartContext);
-
-  // const [cartItems, setCartItems] = useState([
-  //   {
-  //     id: 2,
-  //     name: 'Neilson Milk',
-  //     price: 14.99,
-  //     quantity: 2,
-  //     image: require('../assets/item2.webp'),
-  //   },
-  //   {
-  //     id: 3,
-  //     name: 'Tropicana',
-  //     price: 19.99,
-  //     quantity: 1,
-  //     image: require('../assets/item4.jpg'),
-  //   },
-  // ]);
 
   const renderItem = ({item}) => {
     return (
@@ -72,6 +60,7 @@ const PageHome = ({navigation}: any) => {
       </TouchableOpacity>
     );
   };
+
   return (
     <View style={{flex: 1}}>
       <View style={styles.container}>
@@ -115,10 +104,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#005cbf',
     borderRadius: 2000,
     padding: 5,
+    marginHorizontal: 30,
   },
   icon: {
-    width: 80,
-    height: 80,
+    width: 150,
+    height: 150,
     objectFit: 'cover',
     borderRadius: 2000,
   },

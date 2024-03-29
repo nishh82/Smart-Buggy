@@ -1,4 +1,17 @@
-export const allCartItems = [
+export const productCountInitial = {
+  0: {count: 0, sum: 0},
+  1: {count: 0, sum: 0},
+  2: {count: 0, sum: 0},
+};
+
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image: any;
+}
+export const allCartItems: Product[] = [
   {
     id: 2354263,
     name: 'Nielson Milk',

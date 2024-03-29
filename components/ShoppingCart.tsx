@@ -15,28 +15,58 @@ import {
 } from '@stripe/stripe-react-native';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
+import {getToken, http} from './api/http';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ShoppingCart = ({cartItems}) => {
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
+
+  const calculateSubtotal = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0,
+    );
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    const tax = subtotal * 0.13;
+    return subtotal + tax;
+  };
+
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
+  const total = calculateTotal();
   const fetchPaymentSheetParams = async () => {
-    try {
-      const {data} = await axios.post(
-        'https://arapp-server.onrender.com/payment-sheet',
-        {amount: 50},
-      );
+    if (total > 0) {
+      try {
+        const ax = http();
+        const token = await getToken();
 
-      const {paymentIntent, ephemeralKey, customer} = await data;
+        console.log(calculateTotal());
+        const {data} = await ax.post(
+          '/payment-sheet',
+          {amount: calculateTotal() ? calculateTotal() : 0},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
-      return {
-        paymentIntent,
-        ephemeralKey,
-        customer,
-      };
-    } catch (error) {
-      console.log(error.message);
+        const {paymentIntent, ephemeralKey, customer} = await data;
+
+        return {
+          paymentIntent,
+          ephemeralKey,
+          customer,
+        };
+      } catch (error) {
+        Alert.alert('error', error.response.data.message);
+        // console.log(error.response.data);
+        // console.log(error.message);
+      }
     }
   };
 
@@ -45,24 +75,32 @@ const ShoppingCart = ({cartItems}) => {
       const {paymentIntent, ephemeralKey, customer, publishableKey} =
         await fetchPaymentSheetParams();
 
+      const name = await AsyncStorage.getItem('name');
+      const email = await AsyncStorage.getItem('email');
+
       const {error} = await initPaymentSheet({
         merchantDisplayName: 'Winnovate Systems',
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
         paymentIntentClientSecret: paymentIntent,
+        returnURL: 'https://arapp-server.onrender.com/',
         // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
         //methods that complete payment after a delay, like SEPA Debit and Sofort.
         allowsDelayedPaymentMethods: true,
         defaultBillingDetails: {
-          name: 'Jane Doe',
+          name,
+          email,
         },
       });
       if (!error) {
         setLoading(true);
       }
     };
-    initializePaymentSheet();
-  }, [initPaymentSheet]);
+
+    if (total > 0) {
+      initializePaymentSheet();
+    }
+  }, [initPaymentSheet, total]);
 
   const openPaymentSheet = async () => {
     const {error} = await presentPaymentSheet();
@@ -76,7 +114,6 @@ const ShoppingCart = ({cartItems}) => {
   };
 
   const renderItem = ({item}) => {
-    console.log(item);
     return (
       <View style={styles.cartItem}>
         <Image source={item.image} style={styles.itemImage} />
@@ -87,19 +124,6 @@ const ShoppingCart = ({cartItems}) => {
         <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
       </View>
     );
-  };
-
-  const calculateSubtotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
-    );
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    const tax = subtotal * 0.13;
-    return subtotal + tax;
   };
 
   return (
