@@ -2,6 +2,14 @@ export const productCountInitial = {
   0: {count: 0, sum: 0},
   1: {count: 0, sum: 0},
   2: {count: 0, sum: 0},
+  3: {count: 0, sum: 0},
+  4: {count: 0, sum: 0},
+  5: {count: 0, sum: 0},
+  6: {count: 0, sum: 0},
+  7: {count: 0, sum: 0},
+  8: {count: 0, sum: 0},
+  9: {count: 0, sum: 0},
+  10: {count: 0, sum: 0},
 };
 
 export interface Product {
@@ -11,6 +19,7 @@ export interface Product {
   quantity: number;
   image: any;
 }
+
 export const allCartItems: Product[] = [
   {
     id: 2354263,

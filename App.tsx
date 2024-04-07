@@ -1,10 +1,8 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
 import ShoppingCartProvider from './components/ShoppingCartProvider';
-import AppStack from './components/AppStack';
-import AuthStack from './components/AuthStack';
-import {AuthProvider, useAuthState} from './components/AuthContext';
-import AppNavigator from './components/AppNavigator';
+import {AuthProvider} from './components/AuthContext';
+import AppNavigator from './components/Navigators/AppNavigator';
 
 function App(): React.JSX.Element {
   return (

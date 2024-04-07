@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import ShoppingCart from './ShoppingCart';
 import {ShoppingCartContext} from './ShoppingCartProvider';
+import ProductRecommendation from './ProductRecommendation';
 
 const categories = [
   {
@@ -27,25 +28,29 @@ const categories = [
     to: 'Recipes',
   },
   {
+    name: 'Recipes from Ingredient',
+    icon: require('../assets/recipe.png'),
+    to: 'Ingredients Recipes',
+  },
+  {
     name: 'Chat with us',
     icon: require('../assets/chat.png'),
     to: 'Chat',
   },
   {
-    name: 'QR Code',
-    icon: require('../assets/qr-code.jpeg'),
-    to: 'QR Code',
-  },
-  {
-    name: 'Scan Product',
+    name: 'Scan Products',
     icon: require('../assets/qr-code.jpeg'),
     to: 'Scan Product',
+  },
+  {
+    name: 'Gamification',
+    icon: require('../assets/gamification.jpg'),
+    to: 'Gamification',
   },
 ];
 
 const PageHome = ({navigation}: any) => {
   const {cartItems} = useContext(ShoppingCartContext);
-
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
@@ -71,11 +76,12 @@ const PageHome = ({navigation}: any) => {
             keyExtractor={(_, idx) => idx.toString()}
             renderItem={renderItem}
             horizontal={false}
-            numColumns={3}
+            numColumns={2}
           />
+          <ProductRecommendation />
         </View>
         <View style={styles.cartContainer}>
-          <ShoppingCart cartItems={cartItems} />
+          <ShoppingCart />
         </View>
       </View>
     </View>
@@ -88,8 +94,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
   },
+  recommendationContainer: {
+    borderTopColor: 'black',
+    width: '100%',
+    height: '45%',
+    borderTopWidth: 2,
+    paddingTop: 14,
+  },
   categoryContainer: {
-    width: '70%',
+    width: '60%',
     paddingHorizontal: 30,
     marginTop: 20,
     alignItems: 'center',
@@ -107,9 +120,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
   icon: {
-    width: 150,
-    height: 150,
-    objectFit: 'cover',
+    width: 120,
+    height: 120,
+    objectFit: 'contain',
     borderRadius: 2000,
   },
   categoryText: {

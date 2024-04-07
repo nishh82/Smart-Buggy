@@ -19,8 +19,8 @@ const SuggestRecipesScreen = () => {
 
   const getRecipes = queryIngredients => {
     const number = 5;
-    const apiKey = `202d0436ad3940febb34c174107630fc`;
-    const URL = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${queryIngredients}&number=${number}&apiKey=${apiKey}`;
+    const apiKey = `1eda2b23b95544369a82d2d40f2b5086`;
+    const URL = `https://api.spoonacular.com/recipes/findByIngredients?ingredients=${queryIngredients}&number=5&apiKey=${apiKey}`;
 
     fetch(URL)
       .then(res => {
@@ -72,6 +72,7 @@ const SuggestRecipesScreen = () => {
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
       <FlatList
+        numColumns={2}
         data={recipes}
         renderItem={renderRecipeItem}
         keyExtractor={item => item.id.toString()}
@@ -112,21 +113,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   recipeContainer: {
+    flex: 1,
+    marginHorizontal: 12,
     marginBottom: 24,
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 16,
+    paddingTop: 20,
+    paddingHorizontal: 16,
     elevation: 3,
   },
   title: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
-    textAlign: 'center',
+    height: 50,
   },
   image: {
     width: '100%',
     height: 200,
+    objectFit: 'contain',
     marginBottom: 8,
     borderRadius: 8,
   },

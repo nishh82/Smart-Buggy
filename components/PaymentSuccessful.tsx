@@ -1,9 +1,15 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {useAuthState} from './AuthContext';
+import {ShoppingCartContext} from './ShoppingCartProvider';
 
 const PaymentSuccessfulPage = ({navigation}) => {
+  const {logout} = useAuthState();
+  const {emptyCart} = useContext(ShoppingCartContext);
+
   const handleGoToHome = () => {
-    navigation.navigate('Home'); // Replace 'Home' with the name of your home screen component
+    emptyCart();
+    logout();
   };
   return (
     <View style={styles.container}>

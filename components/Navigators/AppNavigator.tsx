@@ -1,5 +1,5 @@
 import React from 'react';
-import {useAuthState} from './AuthContext';
+import {useAuthState} from '../AuthContext';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -17,8 +17,10 @@ import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import {getToken, http} from './api/http';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ShoppingCartContext} from './ShoppingCartProvider';
 
-const ShoppingCart = ({cartItems}) => {
+const ShoppingCart = () => {
+  const {cartItems, removeItem} = useContext(ShoppingCartContext);
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
 
   const calculateSubtotal = () => {
@@ -63,9 +65,7 @@ const ShoppingCart = ({cartItems}) => {
           customer,
         };
       } catch (error) {
-        Alert.alert('error', error.response.data.message);
-        // console.log(error.response.data);
-        // console.log(error.message);
+        Alert.alert('Error', 'There was an error fetching user data!');
       }
     }
   };
@@ -113,15 +113,44 @@ const ShoppingCart = ({cartItems}) => {
     }
   };
 
+  const showRemoveAlert = (id: number) => {
+    Alert.alert(
+      'Remove Product',
+      'Are you sure you want to remove this product?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Yes', onPress: () => removeItem(id)},
+      ],
+      {cancelable: false},
+    );
+  };
+
   const renderItem = ({item}) => {
     return (
       <View style={styles.cartItem}>
-        <Image source={item.image} style={styles.itemImage} />
+        <Image source={{uri: item.image}} style={styles.itemImage} />
         <View style={styles.itemDetails}>
           <Text style={styles.itemName}>{item.name}</Text>
           <Text style={styles.itemQuantity}>Quantity: {item.quantity}</Text>
         </View>
-        <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <View>
+          <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+          <TouchableOpacity
+            onPress={() => showRemoveAlert(item.id)}
+            style={{
+              backgroundColor: 'red',
+              padding: 2,
+              borderRadius: 1000,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: 18, color: 'white'}}>X</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -129,7 +158,9 @@ const ShoppingCart = ({cartItems}) => {
   return (
     <StripeProvider publishableKey="pk_test_51OtzzEILJiKXbKOocoaYlITtBq3STH3Nxgg5YytN53ZQOVMwfCfiwI2ZIWxqCGwTVhAZnQcHHj84Rawdb0HItQyX00LYnC7z4F">
       <View style={styles.container}>
-        <Text style={styles.heading}>Shopping Cart</Text>
+        <View>
+          <Text style={styles.heading}>Shopping Cart</Text>
+        </View>
         <FlatList
           data={cartItems}
           renderItem={renderItem}
@@ -191,15 +222,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   itemImage: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     marginRight: 16,
   },
   itemDetails: {
     flex: 1,
   },
   itemName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   itemQuantity: {

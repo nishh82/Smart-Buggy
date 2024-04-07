@@ -6,21 +6,23 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  Image,
 } from 'react-native';
-import {products} from './itemLocation';
 
-const GetIngredientsFromRecipe = ({navigation}) => {
+const GetIngredientsFromRecipe = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [ingredients, setIngredients] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
   const handleSearch = () => {
     fetchRecipes(searchQuery);
   };
 
   const fetchRecipes = query => {
-    const URL = `https://api.spoonacular.com/recipes/complexSearch?query=${query}&maxFat=25&number=2&apiKey=202d0436ad3940febb34c174107630fc`;
+    const apiKey = `1eda2b23b95544369a82d2d40f2b5086`;
+    const URL = `https://api.spoonacular.com/recipes/complexSearch?query=${query}&maxFat=25&number=5&apiKey=${apiKey}`;
 
     fetch(URL)
       .then(response => response.json())
@@ -31,11 +33,13 @@ const GetIngredientsFromRecipe = ({navigation}) => {
   };
 
   const fetchIngredients = recipeId => {
-    const URL = `https://api.spoonacular.com/recipes/${recipeId}/information?includeNutrition=false&apiKey=202d0436ad3940febb34c174107630fc`;
+    const apiKey = `1eda2b23b95544369a82d2d40f2b5086`;
+    const URL = `https://api.spoonacular.com/recipes/${recipeId}/information?includeNutrition=false&apiKey=${apiKey}`;
 
     fetch(URL)
       .then(response => response.json())
       .then(data => {
+        console.log(data);
         setIngredients(data.extendedIngredients);
       })
       .catch(error => console.error('Error fetching ingredients:', error));
@@ -45,6 +49,7 @@ const GetIngredientsFromRecipe = ({navigation}) => {
     <TouchableOpacity
       style={styles.recipeItem}
       onPress={() => handleRecipePress(item.id)}>
+      <Image source={{uri: item.image}} style={styles.image} />
       <Text style={styles.recipeTitle}>{item.title}</Text>
     </TouchableOpacity>
   );
@@ -54,57 +59,36 @@ const GetIngredientsFromRecipe = ({navigation}) => {
     fetchIngredients(recipeId);
   };
 
-  const renderIngredientItem = ({item, index}) => {
-    const location = getMapLocation(item);
-    return (
-      <View
-        key={`${item.id}_${index}`}
-        style={{
-          display: 'flex',
-          borderBottomWidth: 2,
-          borderBottomColor: 'gray',
-          paddingVertical: 5,
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-        <Text style={styles.ingredientItem}>{item.original}</Text>
-        {location && (
-          <TouchableOpacity
-            style={{
-              backgroundColor: 'blue',
-              borderRadius: 10,
-              padding: 5,
-              paddingHorizontal: 10,
-              marginLeft: 10,
-            }}
-            onPress={() =>
-              navigation.navigate('Map Screen', {
-                location,
-              })
-            }>
-            <Text style={{fontSize: 10, color: 'white', fontWeight: 600}}>
-              LOCATE
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  };
-
-  const getMapLocation = (item: {
-    name: string;
-    originial: string;
-  }): String | undefined => {
-    const product = products.find(
-      prod => prod.name.toLowerCase() === item.name,
-    );
-
-    if (product) {
-      return product.location;
+  const toggleIngredient = ingredientId => {
+    if (selectedIngredients.includes(ingredientId)) {
+      setSelectedIngredients(
+        selectedIngredients.filter(id => id !== ingredientId),
+      );
+    } else {
+      setSelectedIngredients([...selectedIngredients, ingredientId]);
     }
-
-    return undefined;
   };
+
+  const renderIngredientItem = ({item, index}) => (
+    <TouchableOpacity
+      style={{
+        ...styles.ingredientItemContainer,
+        borderColor: selectedIngredients.includes(item.id) ? 'green' : 'gray',
+        backgroundColor: selectedIngredients.includes(item.id)
+          ? '#5DAB75'
+          : '#DACFCF',
+      }}
+      onPress={() => toggleIngredient(item.id)}>
+      <Text
+        style={{
+          ...styles.ingredientItem,
+          color: selectedIngredients.includes(item.id) ? '#FAE6E6' : 'black',
+          fontWeight: '500',
+        }}>
+        {item.original}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -117,21 +101,24 @@ const GetIngredientsFromRecipe = ({navigation}) => {
       <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
         <Text style={styles.buttonText}>Search</Text>
       </TouchableOpacity>
-      <FlatList
-        data={recipes}
-        renderItem={renderRecipeItem}
-        keyExtractor={item => item.id.toString()}
-      />
-      {selectedRecipe && (
-        <>
-          <Text style={styles.sectionTitle}>Ingredients:</Text>
-          <FlatList
-            data={ingredients}
-            renderItem={renderIngredientItem}
-            keyExtractor={item => item.id.toString()}
-          />
-        </>
-      )}
+      <View style={{flex: 1, flexDirection: 'row'}}>
+        <FlatList
+          numColumns={2}
+          data={recipes}
+          renderItem={renderRecipeItem}
+          keyExtractor={item => item.id.toString()}
+        />
+        {selectedRecipe && (
+          <View style={{flex: 1}}>
+            <Text style={styles.sectionTitle}>Ingredients</Text>
+            <FlatList
+              data={ingredients}
+              renderItem={renderIngredientItem}
+              keyExtractor={(item, index) => `${item.id}_${index}`}
+            />
+          </View>
+        )}
+      </View>
     </View>
   );
 };
@@ -148,6 +135,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 8,
     marginBottom: 16,
+  },
+  image: {
+    width: 150,
+    height: 150,
+    marginBottom: 8,
+    borderRadius: 8,
   },
   searchButton: {
     backgroundColor: 'blue',
@@ -168,17 +161,31 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   recipeTitle: {
-    fontSize: 18,
+    textAlign: 'center',
+    fontSize: 14,
     fontWeight: 'bold',
+    flexWrap: 'wrap',
+    width: 150,
   },
   sectionTitle: {
+    display: 'flex',
+    textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
   },
+  ingredientItemContainer: {
+    flexDirection: 'row',
+    borderColor: 'gray',
+    padding: 10,
+    borderRadius: 2000,
+    borderWidth: 2,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   ingredientItem: {
-    fontSize: 12,
-    marginBottom: 4,
+    fontSize: 16,
+    marginLeft: 8,
   },
 });
 

@@ -94,7 +94,8 @@ const styles = StyleSheet.create({
   },
   scanBox: {
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
-    padding: 20,
+    paddingVertical: 30,
+    paddingHorizontal: 150,
     borderRadius: 5,
   },
   scanBoxText: {
@@ -104,18 +105,3 @@ const styles = StyleSheet.create({
 });
 
 export default QRCodeScannerScreen;
-
-{
-  /* <Camera
-  style={{...styles.camera, width: cameraWidth}}
-  device={device}
-  isActive={!loading}
-  codeScanner={codeScanner}>
-  <View style={styles.overlay}>
-    <Text>Hello</Text>
-    <View style={styles.rectangle}>
-      <Text>QR CODE SCANNER</Text>
-    </View>
-  </View>
-</Camera>; */
-}

@@ -1,16 +1,15 @@
-import {ViroARSceneNavigator} from '@viro-community/react-viro';
-import React, {useState} from 'react';
-import {Button, View} from 'react-native';
-import ARScene from './ARScene';
-import WebView from 'react-native-webview';
+import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import WebView from 'react-native-webview';
 
-const ARPage = () => {
+const MapLocation = () => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <WebView
         originWhitelist={['*']}
-        source={{uri: ''}}
+        source={{
+          uri: 'https://map-viewer.situm.com?apikey=3e911be4a6bb894dcf6982d84cc5d0bd9f45a8039a82e0a1f90ef2f3a53eac72&domain=',
+        }}
         style={{flex: 1}}
         allowsInlineMediaPlayback
         mediaCapturePermissionGrantType="grant"
@@ -20,4 +19,4 @@ const ARPage = () => {
   );
 };
 
-export default ARPage;
+export default MapLocation;

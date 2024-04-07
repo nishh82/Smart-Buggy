@@ -11,37 +11,12 @@ import {Worklets, useSharedValue} from 'react-native-worklets-core';
 import {useResizePlugin} from 'vision-camera-resize-plugin';
 import {Product, productCountInitial} from './cartItem';
 import {ShoppingCartContext} from './ShoppingCartProvider';
-import ShoppingCart from './ShoppingCart';
 
-const products = [
-  {
-    id: 0,
-    name: 'Tim Hortons Hot Chocolate',
-    price: 8.99,
-    image: require('../assets/milk.png'),
-    quantity: 1,
-  },
-  {
-    id: 1,
-    name: 'Gatorade Cool Blue',
-    price: 6.99,
-    image: require('../assets/milk.png'),
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: 'Lysol Disinfectant Wipes',
-    price: 2.99,
-    image: require('../assets/milk.png'),
-    quantity: 1,
-  },
-];
-
-const PREDICTION_RATE_THRESHOLD = 240;
+const PREDICTION_RATE_THRESHOLD = 200;
 const FRAME_WINDOW = 10;
 
 const ScanProduct = ({navigation}) => {
-  const {addToCart, cartItems} = useContext(ShoppingCartContext);
+  const {addToCart, cartItems, products} = useContext(ShoppingCartContext);
   const [isCameraActive, setCameraActive] = useState(true);
 
   const isProductAdded = useSharedValue(false);
@@ -53,7 +28,6 @@ const ScanProduct = ({navigation}) => {
   const productCounts = useSharedValue(productCountInitial);
 
   useEffect(() => {
-    // Clear product counts and cart when the model is reloaded
     if (objectDetection.state === 'loaded') {
       isProductAdded.value = false;
       productCounts.value = productCountInitial;
@@ -96,7 +70,7 @@ const ScanProduct = ({navigation}) => {
   const updateProductCounts = Worklets.createRunInJsFn(
     (detection_scores: any) => {
       for (let product of products) {
-        const productId = product.id;
+        const productId = product.id.toString();
 
         const predictionRate = detection_scores[productId];
 
@@ -152,26 +126,19 @@ const ScanProduct = ({navigation}) => {
 
       //   3. Interpret outputs accordingly
       const detection_scores: any = outputs['0'];
+
       updateProductCounts(detection_scores);
     },
     [model, productCounts],
   );
 
   return (
-    <View style={{flex: 1}}>
-      <View style={styles.container}>
-        <Camera
-          style={{width: 700}}
-          device={device!}
-          isActive={isCameraActive}
-          frameProcessor={frameProcessor}
-        />
-
-        <View style={styles.cartContainer}>
-          <ShoppingCart cartItems={cartItems} />
-        </View>
-      </View>
-    </View>
+    <Camera
+      style={StyleSheet.absoluteFill}
+      device={device!}
+      isActive={isCameraActive}
+      frameProcessor={frameProcessor}
+    />
   );
 };
 

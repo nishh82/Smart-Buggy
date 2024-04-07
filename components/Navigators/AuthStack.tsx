@@ -1,8 +1,8 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import WelcomeScreen from './WelcomeScreen';
-import QRCodeScannerScreen from './QRCodeScannerScreen';
-import UserRegistrationScreen from './UserRegistrationScreen';
+import WelcomeScreen from '../WelcomeScreen';
+import QRCodeScannerScreen from '../QRCodeScannerScreen';
+import UserRegistrationScreen from '../UserRegistrationScreen';
 
 const Stack = createNativeStackNavigator();
 

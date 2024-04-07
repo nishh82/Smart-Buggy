@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   TextInput,
@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import {Product, products} from './itemLocation';
+import {ShoppingCartContext} from './ShoppingCartProvider';
 
 const SearchScreen = ({navigation}) => {
+  const {products} = useContext(ShoppingCartContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState(products);
 

@@ -20,8 +20,12 @@ export const AuthProvider = ({children}) => {
     // Perform login actions here
   };
 
-  const logout = () => {
+  const logout = async () => {
     setIsLoggedIn(false);
+    await AsyncStorage.removeItem('token');
+    await AsyncStorage.removeItem('name');
+    await AsyncStorage.removeItem('email');
+
     // Perform logout actions here
   };
 
