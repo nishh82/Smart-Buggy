@@ -8,8 +8,10 @@ const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
  */
 const config = {
     resolver: {
-        assetExts: ['obj', 'tflite', 'jpeg', 'png', 'webp', 'jpg'],
-    }
+        assetExts: ['json', 'obj', 'tflite', 'jpeg', 'png', 'webp', 'jpg'],
+        sourceExts: ['json'],
+    },
+
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);
